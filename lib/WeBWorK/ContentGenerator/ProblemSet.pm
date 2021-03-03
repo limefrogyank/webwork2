@@ -197,6 +197,11 @@ sub siblings {
 				     && !$LTIRestricted;
 				           }   @setIDs;
 	}
+	
+	# restrict navigation to other problem sets if not allowed
+	unless ($authz->hasPermissions($user, "navigation_allowed")){
+		return "";
+	}
 
 	print CGI::start_div({class=>"info-box", id=>"fisheye"});
 	print CGI::h2($r->maketext("Sets"));
