@@ -1111,10 +1111,14 @@ associated with the current request.
 sub path {
 	my ($self, $args) = @_;
 	my $r = $self->r;
+	my $authz = $r->authz;
 	
 	my @path;
 	
 	my $urlpath = $r->urlpath;
+	my $courseID = $urlpath->arg("courseID");
+	my $userID = $r->param('user');
+  
 	do {
 	    my $name = $urlpath->name;
 	    # If its a problemid for a jitar set (something which requires
@@ -1131,6 +1135,13 @@ sub path {
 	} while ($urlpath = $urlpath->parent);
 	
 	$path[$#path] = ""; # we don't want the last path element to be a link
+	
+	# restrict navigation capabilities if not allowed
+	if (defined $courseID) {
+		unless ($authz->hasPermissions($userID, "navigation_allowed")){
+			return "";
+		}
+	}
 	
 	#print "\n<!-- BEGIN " . __PACKAGE__ . "::path -->\n";
 	print $self->pathMacro($args, @path);
