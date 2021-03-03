@@ -41,10 +41,10 @@ sub path {
 	my $courseID = $urlpath->arg("courseID");
 	my $userID = $r->param('user');
   
-  $self->SUPER::path($args);
+	$self->SUPER::path($args);
 
 	# If regular navigation is restricted, we'll need a "go back" button in case students are using an iframe window within their LMS.
-  # Using browser navigation will only navigate away from the entire webwork iframe in that case.
+	# Using browser navigation will only navigate away from the entire webwork iframe in that case.
 	if (defined $courseID) {
 		unless ($authz->hasPermissions($userID, "navigation_allowed")){
 			print CGI::button(
