@@ -109,10 +109,17 @@ sub nav {
 	my ($self, $args) = @_;
 	my $r = $self->r;
 	my $urlpath = $r->urlpath;
+	my $authz = $r->authz;
+	my $userID = $r->param('user');
 
 	my $courseID = $urlpath->arg("courseID");
 	#my $problemSetsPage = $urlpath->newFromModule("WeBWorK::ContentGenerator::ProblemSets",  $r, courseID => $courseID);
 	my $problemSetsPage = $urlpath->parent;
+	
+	# If navigation is restricted, we don't want to allow a student to navigate to a different problem set.
+ 	unless ($authz->hasPermissions($userID, "navigation_allowed")){
+ 		return "";
+  	}
 	
 	my @links = ($r->maketext("Homework Sets") , $r->location . $problemSetsPage->path, $r->maketext("Homework Sets"));
 	return $self->navMacro($args, '', @links);
