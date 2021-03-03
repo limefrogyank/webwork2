@@ -769,6 +769,22 @@ sub links {
 	# always this value before using it.
 	my %systemlink_args;
 	$systemlink_args{params} = \%params if %params;
+
+	# A permission that is normally set to guest, but can be set to 'login_proctor' so that students don't see navigation links.
+	# This would be very useful when having students navigate to problem sets from an LMS and preventing the student from navigating
+	# to a different problem set from within WeBWorK.  Doing so prevents the LMS from receiving scores for the navigated problem sets. 
+	# Those problem sets must navigated to directly from the LMS for the grade to be sent back to the LMS gradebook. 
+	# This modification will only include the User Settings link so that students can switch between text and MathJax.
+	unless ($authz->hasPermissions($userID, "navigation_allowed")){
+	if (defined $courseID) {
+		if ($authen->was_verified) {
+			print CGI::start_ul();
+			print CGI::li(&$makelink("${pfx}Options", urlpath_args=>{%args}, systemlink_args=>\%systemlink_args));
+			print CGI::end_li();
+			}
+		}
+		return "";
+	}
 	
 	print CGI::start_ul();
 	print CGI::start_li({class => "nav-header"});
